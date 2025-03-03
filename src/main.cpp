@@ -6,7 +6,8 @@
 
 #include <iostream>
 #include <fstream>
-#include "Cache.h"
+#include <filesystem>
+#include "../headers/Cache.h"
 
 // Cache parameters
 int main() {
@@ -17,7 +18,7 @@ int main() {
     const unsigned BLOCK_SIZE = 64;
 
     //The trace file to read memory accesses from
-    std::string trace_file = "./trace.txt";
+    std::string trace_file = std::filesystem::absolute("../data/trace.txt").string();
 
     // Create cache object with fixed parameters
     CacheSimulator::Cache cache("Cache", NUM_SETS, NUM_WAYS, BLOCK_SIZE);
