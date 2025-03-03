@@ -18,33 +18,36 @@ int main() {
     const unsigned BLOCK_SIZE = 64;
 
     //The trace file to read memory accesses from
-    std::string trace_file = std::filesystem::absolute("../data/trace.txt").string();
+    std::string trace_file = std::filesystem::absolute("data/trace.txt").string();
 
     // Create cache object with fixed parameters
     CacheSimulator::Cache cache("Cache", NUM_SETS, NUM_WAYS, BLOCK_SIZE);
 
-    //Open the trace file
     std::ifstream file(trace_file);
+    if (!file) {
+        std::cerr << "[ERROR] Failed to open trace file: " << trace_file << std::endl;
+    }
 
-    //Read each line in the file
-    //Address must be in format W:345435324533 or R:3454235324543253 in order to parse correctly
     std::string line;
     while (std::getline(file, line)) {
-        if (line.empty()) continue; //Ignore possible empty lines
-        
-        //Check line to see if it meets criteria for a memory access
+        if (line.empty()) continue;
+
         if (line.size() < 3 || (line[0] != 'W' && line[0] != 'R') || line[1] != ':') {
-            continue; // Skip invalid lines
-        }    
+            std::cerr << "[WARNING] Skipping invalid line: " << line << std::endl;
+            continue;
+        }
 
-        size_t colon_pos = line.find(':');  // Find the position of :
-    
-        char access_type = line[0];  // First character
-        std::string address_str = line.substr(colon_pos + 1); // Extract address **after** ':'
-
-        unsigned long address = std::stoul(address_str); // Parse as decimal
-        int type = (access_type == 'W') ? 1 : 0; //Is it a read or write?
-        cache.Access(address, type); //Access the cache with the address and the access type
+        char access_type = line[0];
+        std::string address_str = line.substr(2);
+        
+        try {
+            unsigned long address = std::stoul(address_str, nullptr, 16);  // Convert from hex
+            std::cout << "[DEBUG] Read address: " << std::hex << address << std::endl;
+            int type = (access_type == 'W') ? 1 : 0;
+            cache.Access(address, type);
+        } catch (const std::exception& e) {
+            std::cerr << "[ERROR] Failed to parse address: " << address_str << " (" << e.what() << ")" << std::endl;
+        }
     }
 
     file.close();
