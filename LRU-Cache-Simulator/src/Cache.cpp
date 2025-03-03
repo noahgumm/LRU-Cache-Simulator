@@ -4,8 +4,8 @@
     This class simulates a cache that utilizes the LRU policy
 */
 
-#include "Cache.h"
-#include "CacheStatistics.h"
+#include "../headers/Cache.h"
+#include "../headers/CacheStatistics.h"
 #include "math.h"
 #include "iostream"
 

@@ -5,7 +5,7 @@
 */
 
 #include <iostream>
-#include "CacheStatistics.h"
+#include "../headers/CacheStatistics.h"
 
 namespace CacheSimulator{
     //Empty constructor
